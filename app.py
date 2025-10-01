@@ -1,27 +1,49 @@
-import streamlit as st
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-import numpy as np
+from flask import Flask, jsonify , request
+from streamlit import json
+from src.pipelines.prediction_pipeline import PredictionPipeline
+from src.utils.helper import CNNetwork
+from flask_cors import CORS
+from src.utils.database import PlantInfoDB
 
-def preprocess_load_image(uploaded_file):
-    IMG_SIZE = (224, 224)
-    img = load_img(uploaded_file, target_size=IMG_SIZE)
-    img_array = img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
-    img_array /= 255.0
-    return img_array
 
-class_names = ['Arjun Leaf', 'Curry Leaf', 'Marsh Pennywort Leaf', 'Mint Leaf', 'Neem Leaf', 'Rubble Leaf']
+app = Flask(__name__)
+CORS(app)
 
-st.title("Medicinal Plant Identification")
+db = PlantInfoDB()
 
-uploaded_file = st.file_uploader(label="Upload Plant Leaf Image")
+@app.route("/")
+def home():
+    return jsonify({"res":"hello"})
 
-if uploaded_file and st.button("Predict"):
-    model = tf.keras.models.load_model('./artifacts/models/best_model.h5')
-    img = preprocess_load_image(uploaded_file)
-    predictions = model.predict(img)
-    score = tf.nn.softmax(predictions[0])
-    st.write(
-        f"This image most likely belongs to {class_names[tf.argmax(score)]} with a {100 * tf.reduce_max(score):.2f} percent confidence."
-    )
+@app.route("/predict" ,methods=['POST'])
+def predict():
+    pipe = PredictionPipeline()
+    if 'imageInput' not in request.files:
+        return jsonify({"error":"no image part"}) , 400
+    
+    image = request.files['imageInput']
+
+    try:
+        prediction , confidence = pipe.predict(image)
+        return jsonify({"result":prediction , "confidence":confidence})
+    
+    except Exception as e:
+        return jsonify({"error":e})    
+
+@app.route("/plantInfo" , methods=['POST'])
+def get_plant_info():
+    try:
+        data = request.get_json()
+        plant_name = data.get("plant_name")
+
+        if not plant_name:
+            return jsonify({"error": "plant name is required"}), 400
+
+        plant_info = db.get_info(plant_name)  
+        return plant_info
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+if __name__ == '__main__':
+    app.run(debug=True , host='0.0.0.0' )
