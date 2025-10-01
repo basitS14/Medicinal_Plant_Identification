@@ -5,3 +5,5 @@ __pycache__/
 *.pyo
 Medicinal Plant Identification Dataset/
 artifacts/
+frontend/node_modules
+logs
