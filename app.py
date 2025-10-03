@@ -8,10 +8,12 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+token_blacklist = set()
+
 
 
 app = Flask(__name__)
-app.config["JWT_SECRET"] = os.getenv("JWT_SECRET")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 CORS(app) 
 
 db = ManageDB()
@@ -50,6 +52,28 @@ def login():
         return jsonify({"msg":"Invalid email or password"}) , 401
     except Exception as e:
         return jsonify({"error":e}) , 500
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    """
+    Logout user by blacklisting their token
+    """
+    try:
+        # Get token from header
+        auth_header = request.headers.get('Authorization')
+        token = auth_header.split(" ")[1]
+        
+        # Add token to blacklist
+        token_blacklist.add(token)
+        
+        return jsonify({
+            'message': 'Successfully logged out'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
 
                
 @app.route("/predict" ,methods=['POST'])

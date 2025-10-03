@@ -242,11 +242,11 @@
             // Here you would make your API call
             try {
                 // Example API call (replace with your backend endpoint)
-                /*
-                const response = await fetch('YOUR_API/signup', {
+                
+                const response = await fetch('http://127.0.0.1:5000/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({ name:name , email:email , password:password })
                 });
                 
                 const data = await response.json();
@@ -258,16 +258,8 @@
                         window.location.href = 'login.html';
                     }, 1500);
                 } else {
-                    showAuthToast('Signup failed: ' + data.message, 'error');
+                    showAuthToast('Signup failed: ' + data.msg, 'error');
                 }
-                */
-
-                // Mock success for demo
-                showAuthToast('Account created successfully!', 'success');
-                setTimeout(() => {
-                    console.log('Signup data:', { name, email });
-                    // window.location.href = 'login.html';
-                }, 1500);
 
             } catch (error) {
                 showAuthToast('Signup error: ' + error.message, 'error');

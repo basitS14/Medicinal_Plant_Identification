@@ -59,10 +59,20 @@
                         </svg>
                         History
                     </button>
-                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors">
+                    <div id="profileBtn" class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                         </svg>
+                    </div>
+                      <!-- Dropdown -->
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                        <div class="px-4 py-3 border-b border-gray-100">
+                        <span id="profileName" class="block text-sm font-medium text-gray-700"></span>
+                        <span id="profileEmail" class="block text-xs text-gray-500"></span>
+                        </div>
+                        <div class="py-2">
+                        <a id="loginBtn" href="login.html" class="hidden  px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</a>
+                        <button id="logoutBtn" class="hidden w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Logout</button>
                     </div>
                 </div>
             </div>
